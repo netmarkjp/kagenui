@@ -62,6 +62,9 @@ func (mpd *MiniProfilerData) Step(tag string) {
 	if !enabled {
 		return
 	}
+	if mpd == nil {
+		return
+	}
 	now := time.Now()
 	thisstep := now.Sub(mpd.lastStep).Nanoseconds()
 
@@ -73,9 +76,9 @@ func (mpd *MiniProfilerData) End() {
 	if !enabled {
 		return
 	}
-	now := time.Now()
-	thisstep := now.Sub(mpd.lastStep).Nanoseconds()
-
-	mpd.steps["Last Step to End"] = thisstep
+	if mpd == nil {
+		return
+	}
+	mpd.Step("Last Step to End")
 	mp.profiles = append(mp.profiles, mpd)
 }
