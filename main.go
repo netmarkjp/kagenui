@@ -3,7 +3,6 @@ package miniprofiler
 import (
 	"fmt"
 	"io"
-	"os"
 	"strings"
 	"time"
 )
@@ -55,12 +54,12 @@ func Begin(description string) *MiniProfilerData {
 
 func Flush(writer io.Writer) {
 	for _, prof := range mp.profiles {
-		out := "log:MP"
+		outputs := []string{"log:MP"}
 		for tag, val := range prof.steps {
-			out = fmt.Sprintf("%s\t%s:%d", out, tag, val)
+			outputs = append(outputs, fmt.Sprintf("%s:%d", tag, val))
 		}
-		out = fmt.Sprintf("%s\tdescription:%s", out, prof.description)
-		fmt.Fprintln(writer, out)
+		outputs = append(outputs, fmt.Sprintf("description:%s", prof.description))
+		fmt.Fprintln(writer, strings.Join(outputs, "\t"))
 	}
 	mp.profiles = make([]*MiniProfilerData, 0)
 }
