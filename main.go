@@ -128,17 +128,6 @@ var (
 	}
 )
 
-type ByTime []*Time
-
-type Time struct {
-	Url  string
-	Time int64
-}
-
-func (a ByTime) Len() int           { return len(a) }
-func (a ByTime) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByTime) Less(i, j int) bool { return a[i].Time > a[j].Time }
-
 func getIntegerDigitWidth(i int) int {
 	var w int
 	switch {
