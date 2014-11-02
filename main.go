@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 	"time"
 )
 
 var (
-	mp      *MiniProfiler
-	writer  io.Writer
-	enabled bool
+	mp        *MiniProfiler
+	writer    io.Writer
+	enabled   bool
+	condition func() bool
 )
 
 type MiniProfilerData struct {
@@ -28,6 +30,7 @@ func init() {
 	mp = new(MiniProfiler)
 	mp.profiles = make([]*MiniProfilerData, 0)
 	enabled = true
+	condition = func() bool { return true }
 }
 
 func SetWriter(w io.Writer) {
@@ -42,7 +45,17 @@ func Disable() {
 	enabled = false
 }
 
+func SetCondition(c func() bool) {
+	condition = c
+}
+
 func Begin(description string) *MiniProfilerData {
+	if !enabled {
+		return nil
+	}
+	if !condition() {
+		return nil
+	}
 	return &MiniProfilerData{description, make(map[string]int64, 0), time.Now()}
 }
 
