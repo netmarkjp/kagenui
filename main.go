@@ -123,6 +123,7 @@ var (
 		&Column{Name: "Count", Summary: "Count", Sort: func(a, b *Measure) bool { return a.Count > b.Count }},
 		&Column{Name: "Total", Summary: "Total", Sort: func(a, b *Measure) bool { return a.Total > b.Total }},
 		&Column{Name: "Mean", Summary: "Mean", Sort: func(a, b *Measure) bool { return a.Mean > b.Mean }},
+		&Column{Name: "Min"},
 		&Column{Name: "Max", Summary: "Maximum(100 Percentile)", Sort: func(a, b *Measure) bool { return a.Max > b.Max }},
 	}
 )
@@ -192,7 +193,7 @@ func showMeasures(writer io.Writer, measures []*Measure) {
 			format += fmt.Sprintf("%%%dd  ", maxWidth)
 		}
 	}
-	fmt.Fprintf(writer, "Description\n")
+	fmt.Fprintln(writer, "Description")
 	format += "%s\n"
 
 	for _, m := range measures {
