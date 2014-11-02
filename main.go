@@ -10,7 +10,6 @@ import (
 
 var (
 	mp        *MiniProfiler
-	writer    io.Writer
 	enabled   bool
 	condition func() bool
 )
@@ -26,15 +25,10 @@ type MiniProfiler struct {
 }
 
 func init() {
-	writer = os.Stdout
 	mp = new(MiniProfiler)
 	mp.profiles = make([]*MiniProfilerData, 0)
 	enabled = true
 	condition = func() bool { return true }
-}
-
-func SetWriter(w io.Writer) {
-	writer = w
 }
 
 func Enable() {
@@ -59,7 +53,7 @@ func Begin(description string) *MiniProfilerData {
 	return &MiniProfilerData{description, make(map[string]int64, 0), time.Now()}
 }
 
-func Flush() {
+func Flush(writer io.Writer) {
 	for _, prof := range mp.profiles {
 		out := "log:MP"
 		for tag, val := range prof.steps {
