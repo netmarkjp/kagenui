@@ -195,17 +195,18 @@ func Analyze(writer io.Writer) {
 	var totals = make(map[string]int)
 	for _, prof := range mp.profiles {
 		for tag, val := range prof.steps {
-			times[tag] = append(times[tag], int(val))
-			totals[tag] += int(val)
+			description := fmt.Sprintf("%s/%s", prof.description, tag)
+			times[description] = append(times[description], int(val))
+			totals[description] += int(val)
 		}
 	}
 	var measures []*Measure
-	for tag, times := range times {
+	for description, times := range times {
 		sort.Ints(times)
 		count := len(times)
-		total := totals[tag]
+		total := totals[description]
 		m := &Measure{
-			Description: tag,
+			Description: description,
 			Count:       count,
 			Total:       total,
 			Mean:        total / count,
