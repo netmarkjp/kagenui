@@ -55,7 +55,7 @@ func Begin(description string) *MiniProfilerData {
 	return &MiniProfilerData{description, make(map[string]int64, 0), time.Now(), make([]string, 0)}
 }
 
-func Flush(writer io.Writer) {
+func Dump(writer io.Writer) {
 	for _, prof := range mp.profiles {
 		outputs := []string{"log:MP"}
 
@@ -73,6 +73,9 @@ func Flush(writer io.Writer) {
 
 		fmt.Fprintln(writer, strings.Join(outputs, "\t"))
 	}
+}
+
+func Flush() {
 	mp.profiles = make([]*MiniProfilerData, 0)
 }
 
