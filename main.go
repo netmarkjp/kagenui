@@ -84,6 +84,7 @@ type Measure struct {
 	Count       int
 	Total       int
 	Mean        int
+	Stddev      float64
 	Min         int
 	Max         int
 }
@@ -126,6 +127,7 @@ var (
 		&Column{Name: "Count", Summary: "Count", Sort: func(a, b *Measure) bool { return a.Count > b.Count }},
 		&Column{Name: "Total", Summary: "Total", Sort: func(a, b *Measure) bool { return a.Total > b.Total }},
 		&Column{Name: "Mean", Summary: "Mean", Sort: func(a, b *Measure) bool { return a.Mean > b.Mean }},
+		&Column{Name: "Stddev", Summary: "Standard Deviation", Sort: func(a, b *Measure) bool { return a.Stddev > b.Stddev }},
 		&Column{Name: "Min"},
 		&Column{Name: "Max", Summary: "Maximum(100 Percentile)", Sort: func(a, b *Measure) bool { return a.Max > b.Max }},
 	}
@@ -145,8 +147,9 @@ func getIntegerDigitWidth(i int) int {
 func showMeasures(writer io.Writer, measures []*Measure) {
 	countWidth := 5
 	totalWidth := 5
-	meanWidth := 5
-	maxWidth := 5
+	meanWidth := 4
+	stddevWidth := 6
+	maxWidth := 3
 
 	for _, m := range measures {
 		var w int
@@ -158,9 +161,13 @@ func showMeasures(writer io.Writer, measures []*Measure) {
 		if totalWidth < w {
 			totalWidth = w
 		}
-		w = getIntegerDigitWidth(m.Mean)
+		w = getIntegerDigitWidth(int(m.Mean))
 		if meanWidth < w {
 			meanWidth = w
+		}
+		w = getIntegerDigitWidth(int(m.Stddev)) + 4
+		if stddevWidth < w {
+			stddevWidth = w
 		}
 		w = getIntegerDigitWidth(m.Max)
 		if maxWidth < w {
@@ -180,6 +187,9 @@ func showMeasures(writer io.Writer, measures []*Measure) {
 		case "Mean":
 			fmt.Fprintf(writer, fmt.Sprintf("%%%ds  ", meanWidth), column.Name)
 			format += fmt.Sprintf("%%%dd  ", meanWidth)
+		case "Stddev":
+			fmt.Fprintf(writer, fmt.Sprintf("%%%ds  ", stddevWidth), column.Name)
+			format += fmt.Sprintf("%%%d.3f  ", stddevWidth)
 		default:
 			fmt.Fprintf(writer, fmt.Sprintf("%%%ds  ", maxWidth), column.Name)
 			format += fmt.Sprintf("%%%dd  ", maxWidth)
@@ -189,7 +199,7 @@ func showMeasures(writer io.Writer, measures []*Measure) {
 	format += "%s\n"
 
 	for _, m := range measures {
-		fmt.Fprintf(writer, format, m.Count, m.Total, m.Mean, m.Min, m.Max, m.Description)
+		fmt.Fprintf(writer, format, m.Count, m.Total, m.Mean, m.Stddev, m.Min, m.Max, m.Description)
 	}
 }
 
@@ -216,6 +226,11 @@ func Analyze(writer io.Writer) {
 			Min:         times[0],
 			Max:         times[count-1],
 		}
+		var sum int
+		for _, t := range times {
+			sum += (t - m.Mean) * (t - m.Mean)
+		}
+		m.Stddev = math.Sqrt(float64(sum) / float64(count))
 		measures = append(measures, m)
 	}
 
