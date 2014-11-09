@@ -1,4 +1,4 @@
-package miniprofiler
+package kagenui
 
 import (
 	"fmt"
@@ -10,25 +10,25 @@ import (
 )
 
 var (
-	mp        *MiniProfiler
+	mp        *Kagenui
 	enabled   bool
 	condition func() bool
 )
 
-type MiniProfilerData struct {
+type KagenuiData struct {
 	description string
 	steps       map[string]int64
 	lastStep    time.Time
 	memos       []string
 }
 
-type MiniProfiler struct {
-	profiles []*MiniProfilerData
+type Kagenui struct {
+	profiles []*KagenuiData
 }
 
 func init() {
-	mp = new(MiniProfiler)
-	mp.profiles = make([]*MiniProfilerData, 0)
+	mp = new(Kagenui)
+	mp.profiles = make([]*KagenuiData, 0)
 	enabled = true
 	condition = func() bool { return true }
 }
@@ -45,14 +45,14 @@ func SetCondition(c func() bool) {
 	condition = c
 }
 
-func Begin(description string) *MiniProfilerData {
+func Begin(description string) *KagenuiData {
 	if !enabled {
 		return nil
 	}
 	if !condition() {
 		return nil
 	}
-	return &MiniProfilerData{description, make(map[string]int64, 0), time.Now(), make([]string, 0)}
+	return &KagenuiData{description, make(map[string]int64, 0), time.Now(), make([]string, 0)}
 }
 
 func Dump(writer io.Writer) {
@@ -76,7 +76,7 @@ func Dump(writer io.Writer) {
 }
 
 func Flush() {
-	mp.profiles = make([]*MiniProfilerData, 0)
+	mp.profiles = make([]*KagenuiData, 0)
 }
 
 type Measure struct {
@@ -244,7 +244,7 @@ func Analyze(writer io.Writer) {
 	}
 }
 
-func (mpd *MiniProfilerData) Step(tag string) {
+func (mpd *KagenuiData) Step(tag string) {
 	if !enabled {
 		return
 	}
@@ -258,7 +258,7 @@ func (mpd *MiniProfilerData) Step(tag string) {
 	mpd.lastStep = now
 }
 
-func (mpd *MiniProfilerData) Memo(memo string) {
+func (mpd *KagenuiData) Memo(memo string) {
 	if !enabled {
 		return
 	}
@@ -280,7 +280,7 @@ func memoFilter(memo string) string {
 	return memo
 }
 
-func (mpd *MiniProfilerData) End() {
+func (mpd *KagenuiData) End() {
 	if !enabled {
 		return
 	}

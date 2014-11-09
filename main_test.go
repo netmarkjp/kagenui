@@ -1,4 +1,4 @@
-package miniprofiler
+package kagenui
 
 import (
 	"math/rand"

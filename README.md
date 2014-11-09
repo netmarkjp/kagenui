@@ -1,7 +1,7 @@
-miniprofiler
+kagenui
 ============
 
-miniprofiler for golang
+kagenui is profiler for golang
 
 Good for use with web application.
 
@@ -9,15 +9,15 @@ Usage
 ============
 
 ```
-go get github.com/netmarkjp/miniprofiler
+go get github.com/netmarkjp/kagenui
 ```
 
 
 ```
-import "github.com/netmarkjp/miniprofiler"
+import "github.com/netmarkjp/kagenui"
 
 func someHandler(w http.ResponseWriter, r *http.Request) {
-    mp := miniprofiler.Begin("someHandler")
+    mp := kagenui.Begin("someHandler")
     defer mp.End()
 
     ...
@@ -30,9 +30,9 @@ func someHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func profileHandler(w http.ResponseWriter, r *http.Request) {
-    miniprofiler.Analyze(w)
-    // miniprofiler.Dump(w)
-    miniprofiler.Flush()
+    kagenui.Analyze(w)
+    // kagenui.Dump(w)
+    kagenui.Flush()
 }
 ```
 
@@ -86,9 +86,9 @@ Customize
 ## Enable/Disable
 
 ```
-miniprofiler.Enable()
+kagenui.Enable()
 ```
 
 ```
-miniprofiler.Disable()
+kagenui.Disable()
 ```
