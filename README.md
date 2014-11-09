@@ -1,7 +1,7 @@
 kagenui
 ============
 
-kagenui is profiler for golang
+kagenui is profiler and analyzer for golang
 
 Good for use with web application.
 
@@ -16,7 +16,7 @@ go get github.com/netmarkjp/kagenui
 ```
 import "github.com/netmarkjp/kagenui"
 
-func someHandler(w http.ResponseWriter, r *http.Request) {
+func SomeHandler(){
     mp := kagenui.Begin("someHandler")
     defer mp.End()
 
@@ -25,8 +25,18 @@ func someHandler(w http.ResponseWriter, r *http.Request) {
     mp.Step("exec XXX")
 
     ...
+    if valid {
+        mp.AddMemo("cache is valid")
+        ...
+    } else {
+        mp.AddMemo("cache is invalid")
+        ...
+    }
+
+    ...
 
     mp.Step("exec YYY")
+
 }
 
 func profileHandler(w http.ResponseWriter, r *http.Request) {
@@ -77,7 +87,7 @@ Dump Output
 ltsv format
 
 ```
-log:MP<TAB><DESCRIPTION_AT_STEP>:<SPENT_TIME_IN_NANOSEC><TAB>...<TAB>description:<DESCRIPTION_AT_BEGIN><TAB>memo:<MEMO>
+log:MP<TAB><DESCRIPTION_AT_STEP>:<SPENT_TIME_IN_NANOSEC><TAB>...<TAB>description:<DESCRIPTION_AT_BEGIN><TAB>memo:<MEMO1>,<MEMO2>,...
 ```
 
 Customize
